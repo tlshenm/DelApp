@@ -8,7 +8,7 @@ import android.widget.BaseAdapter;
 /**
  * AsyncTask 부모 클래스
  */
-public abstract class BaseAsyncTask extends AsyncTask<Object,Object,Object> {
+public abstract class BaseAsyncTask<T, T1, T2> extends AsyncTask<T, T1, T2> {
     private Context mContext = null;
     public ProgressDialog mProgressDialog = null;
 
