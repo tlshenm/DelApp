@@ -184,7 +184,6 @@ public class appFragment extends Fragment {
         @Override
         protected void onPostExecute(ArrayList<AppData> appList) {
             super.onPostExecute(appList);
-            hideProgressDialog();
             if (appList != null) {
                 mAppList = appList;
             } else {
@@ -204,8 +203,6 @@ public class appFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            showHorizontalProgressDialog();
-//            showCircleProgressDialog();
         }
 
         @Override
