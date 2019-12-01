@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements appFragment.OnLis
     }
 
     @Override
-    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+    public void onListFragmentInteraction(AppData item) {
         //리스트 클릭
     }
 

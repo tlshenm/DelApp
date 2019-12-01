@@ -3,13 +3,16 @@ package com.sishin.phone.delapp;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.sishin.phone.delapp.appFragment.OnListFragmentInteractionListener;
+import com.sishin.phone.delapp.data.AppData;
 import com.sishin.phone.delapp.dummy.DummyContent.DummyItem;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,10 +22,10 @@ import java.util.List;
  */
 public class appRecyclerViewAdapter extends RecyclerView.Adapter<appRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
+    private final ArrayList<AppData> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public appRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
+    public appRecyclerViewAdapter(ArrayList<AppData> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -37,8 +40,8 @@ public class appRecyclerViewAdapter extends RecyclerView.Adapter<appRecyclerView
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
+        holder.mIvApp.setBackground(mValues.get(position).icon);
+        holder.mTvAppName.setText(mValues.get(position).title);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,22 +60,30 @@ public class appRecyclerViewAdapter extends RecyclerView.Adapter<appRecyclerView
         return mValues.size();
     }
 
+    public void clear(){
+        mValues.clear();
+    }
+
+    public void addAll(ArrayList<AppData> mAppList){
+        mValues.addAll(mAppList);
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
-        public DummyItem mItem;
+        public final ImageView mIvApp;
+        public final TextView mTvAppName;
+        public AppData mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.item_number);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            mIvApp = (ImageView) view.findViewById(R.id.iv_app_list);
+            mTvAppName = (TextView) view.findViewById(R.id.tv_app_name);
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + mTvAppName.getText() + "'";
         }
     }
 }

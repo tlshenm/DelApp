@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.TokenWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,9 +25,11 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.sishin.phone.delapp.base.BaseAsyncTask;
+import com.sishin.phone.delapp.component.CustomProgressDialog;
 import com.sishin.phone.delapp.data.AppData;
 import com.sishin.phone.delapp.dummy.DummyContent;
 import com.sishin.phone.delapp.dummy.DummyContent.DummyItem;
+import com.sishin.phone.delapp.util.Util;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,6 +49,7 @@ public class appFragment extends Fragment {
     private OnListFragmentInteractionListener mListener;
     private int mColumnCount = 4;
     private ArrayList<AppData> mAppList = null;
+    private appRecyclerViewAdapter mAdapter = null;
     private Context mContext = null;
 
     /**
@@ -72,7 +76,7 @@ public class appFragment extends Fragment {
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
-
+        Util.currentViewApp(getActivity());
     }
 
     @Override
@@ -104,8 +108,7 @@ public class appFragment extends Fragment {
         } else {
             mRecyclerView.setLayoutManager(new GridLayoutManager(mContext, mColumnCount));
         }
-        mRecyclerView.setAdapter(new appRecyclerViewAdapter(DummyContent.ITEMS, mListener));
-        new ProgressTest(mContext).execute();
+        new AppListTask().execute();
 
     }
 
@@ -127,13 +130,13 @@ public class appFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        void onListFragmentInteraction(AppData item);
     }
 
     private class AppListTask extends BaseAsyncTask<Void, Integer, ArrayList<AppData>> {
 
         public AppListTask(){
-            super(mContext);
+            super(mContext,CustomProgressDialog.PROGRESS_TYPE.HORIZONTAL);
         }
         @SuppressLint("WrongThread")
         @Override
@@ -186,8 +189,23 @@ public class appFragment extends Fragment {
             super.onPostExecute(appList);
             if (appList != null) {
                 mAppList = appList;
+                if(mAdapter != null){
+                    mAdapter.clear();
+                    mAdapter.addAll(mAppList);
+                }else{
+                    mAdapter = new appRecyclerViewAdapter(mAppList, mListener);
+                    mRecyclerView.setAdapter(mAdapter);
+                }
+                mAdapter.notifyDataSetChanged();
+//                for(AppData appData : mAppList){
+//                    Log.i("sishin","--------------------------------- ");
+//                    Log.i("sishin","sishin title = "+appData.packageName);
+//                    Log.i("sishin","sishin title = "+appData.title);
+//                    Log.i("sishin","sishin title = "+appData.icon);
+//                }
             } else {
                 //Todo 에러발생 알림적용
+                Toast.makeText(mContext,"ERROR 앱 설치목록을 가져오지 못했습니다.",Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -196,7 +214,7 @@ public class appFragment extends Fragment {
     private class ProgressTest extends BaseAsyncTask<Void, Integer, Boolean> {
 
         public ProgressTest(Context context){
-            super(context);
+            super(context,CustomProgressDialog.PROGRESS_TYPE.HORIZONTAL);
         }
 
         @SuppressLint("WrongThread")
@@ -213,11 +231,11 @@ public class appFragment extends Fragment {
 
         @Override
         protected Boolean doInBackground(Void... strings) {
-            mProgressDialog.setProgress(1000);
-            for(int i =0; i<1000;i++){
+            mProgressDialog.setProgress(100);
+            for(int i =0; i<100;i++){
                 mProgressDialog.setProgress(i);
                 try {
-                    Thread.sleep(2000);
+                    Thread.sleep(200);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -229,9 +247,9 @@ public class appFragment extends Fragment {
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
             if (result) {
-                Toast.makeText(mContext, "test 성공", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "sishin 성공", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(mContext, "test 실패", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "sishin 실패", Toast.LENGTH_SHORT).show();
             }
         }
     }
